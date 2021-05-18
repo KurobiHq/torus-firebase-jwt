@@ -20,14 +20,17 @@ class DirectSDKNative extends DirectSDK {
     try {
       final key = await super.getTorusKey(options);
       if (key != null) {
+        print('GOT CACHED KEY: ${key.publicAddress}');
         return key;
       }
+      print('REQUESTING NEW KEY: ${options.verifierId}');
       final result =
           await _channel.invokeMethod('getTorusKey', options.toMap());
       final currentKeyPair = TorusKeyPair.fromMap(asStringKeyedMap(result));
       setCurrentKeyPair(options, currentKeyPair);
       return currentKeyPair;
     } catch (error) {
+      print('ERROR: ${error}');
       throw TorusDirectException(
           code: TorusExceptionCode.unknown, message: '$error');
     }

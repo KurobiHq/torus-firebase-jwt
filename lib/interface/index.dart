@@ -140,13 +140,14 @@ abstract class DirectSDK {
   TorusKeyPair? _currentKeyPair;
 
   Future<void> init(DirectSDKOptions options);
+
   void setCurrentKeyPair(KeyOptions keyOptions, TorusKeyPair currentKeyPair) {
     _keyOptions = keyOptions;
     _currentKeyPair = currentKeyPair;
   }
 
   Future<TorusKeyPair?> getTorusKey(KeyOptions options) async {
-    if (_keyOptions == options && _keyOptions != null) {
+    if (_keyOptions != null && _keyOptions == options) {
       return _currentKeyPair!;
     }
     return null;
