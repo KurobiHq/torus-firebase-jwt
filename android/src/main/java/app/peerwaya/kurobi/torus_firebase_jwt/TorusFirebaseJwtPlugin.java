@@ -60,6 +60,7 @@ public class TorusFirebaseJwtPlugin implements FlutterPlugin, MethodCallHandler 
                     @Override
                     public void run() {
                         if (error != null) {
+                            error.printStackTrace();
                             result.error("getTorusKeyFailed", error.getMessage(), "");
                         } else {
                             torusKeyMap.put("privateKey", torusLoginResponse.getPrivateKey());
