@@ -35,9 +35,9 @@ public class TorusUtils {
     ConcurrentHashMap<String, BigInteger> metadataCache = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, ReentrantReadWriteLock> locks = new ConcurrentHashMap<>();
 
-//    {
-//        setupBouncyCastle();
-//    }
+    {
+        //setupBouncyCastle();
+    }
 
     public TorusUtils() {
         this("https://metadata.tor.us", "https://signer.tor.us/api/allow");
@@ -107,14 +107,15 @@ public class TorusUtils {
     public CompletableFuture<RetrieveSharesResponse> retrieveShares(String[] endpoints, BigInteger[] indexes, String verifier,
                                                                     HashMap<String, Object> verifierParams, String idToken, HashMap<String, Object> extraParams) throws TorusException {
         try {
-            APIUtils.get(this.allowHost, new Header[]{new Header("Origin", this.origin)}, true).join();
+            APIUtils.get(this.allowHost, new Header[]{new Header("Origin", this.origin),
+                    new Header("verifier", verifier), new Header("verifier_id", verifierParams.get("verifier_id").toString())}, true).join();
             List<CompletableFuture<String>> promiseArr = new ArrayList<>();
             // generate temporary private and public key that is used to secure receive shares
             ECKeyPair tmpKey = Keys.createEcKeyPair();
             String pubKey = tmpKey.getPublicKey().toString(16);
             String pubKeyX = pubKey.substring(0, pubKey.length() / 2);
             String pubKeyY = pubKey.substring(pubKey.length() / 2);
-            String tokenCommitment = Hash.sha3String(idToken);
+            String tokenCommitment = org.web3j.crypto.Hash.sha3String(idToken);
             int t = Math.floorDiv(endpoints.length, 4);
             int k = t * 2 + 1;
 
