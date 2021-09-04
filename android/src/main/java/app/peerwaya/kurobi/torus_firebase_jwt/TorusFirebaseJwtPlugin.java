@@ -18,6 +18,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import org.torusresearch.torusdirect.TorusDirectSdk;
 import org.torusresearch.torusdirect.types.DirectSdkArgs;
 import org.torusresearch.torusdirect.types.TorusNetwork;
+import org.torusresearch.torusutils.helpers.Utils;
 
 import java.util.HashMap;
 
@@ -46,7 +47,7 @@ public class TorusFirebaseJwtPlugin implements FlutterPlugin, MethodCallHandler 
         if (call.method.equals("init")) {
             String baseUrl = call.argument("baseUrl");
             String network = call.argument("network");
-            DirectSdkArgs directSdkArgs = new DirectSdkArgs(baseUrl, TorusNetwork.TESTNET);
+            DirectSdkArgs directSdkArgs = new DirectSdkArgs(baseUrl, network == "testnet"? TorusNetwork.TESTNET : TorusNetwork.MAINNET);
             this.torusDirectSDK = new TorusDirectSdk(directSdkArgs, this.context);
             result.success(null);
         } else if (call.method.equals("getTorusKey")) {
@@ -64,8 +65,10 @@ public class TorusFirebaseJwtPlugin implements FlutterPlugin, MethodCallHandler 
                             Log.e("TORUS", error.getMessage(), error);
                             result.error("getTorusKeyFailed", error.getMessage(), "");
                         } else {
-                            torusKeyMap.put("privateKey", torusLoginResponse.getPrivateKey());
-                            torusKeyMap.put("publicAddress", torusLoginResponse.getPublicAddress());
+                            String privateKey = Utils.padLeft(torusLoginResponse.getPrivateKey(), '0', 64);
+                            String publicKey = torusLoginResponse.getPublicAddress();
+                            torusKeyMap.put("privateKey", privateKey);
+                            torusKeyMap.put("publicAddress", publicKey);
                             result.success(torusKeyMap);
                         }
                     }

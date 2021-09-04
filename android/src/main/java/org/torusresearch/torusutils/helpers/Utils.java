@@ -1,5 +1,7 @@
 package org.torusresearch.torusutils.helpers;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 import org.torusresearch.fetchnodedetails.types.TorusNodePub;
@@ -92,7 +94,7 @@ public class Utils {
                 Gson gson = new Gson();
                 for (String x :
                         lookupResults) {
-                    if (!x.equals("")) {
+                    if (x != null && !x.equals("")) {
                         try {
                             JsonRPCResponse response = gson.fromJson(x, JsonRPCResponse.class);
                             keyResults.add(gson.toJson(response.getResult()));
@@ -103,7 +105,7 @@ public class Utils {
                 }
                 for (String x :
                         lookupResults) {
-                    if (!x.equals("")) {
+                    if (x != null && !x.equals("")) {
                         try {
                             JsonRPCResponse response = gson.fromJson(x, JsonRPCResponse.class);
                             errorResults.add(response.getError().getData());
@@ -114,14 +116,17 @@ public class Utils {
                 }
                 String errorResult = thresholdSame(errorResults, k);
                 String keyResult = thresholdSame(keyResults, k);
-                if (!errorResult.equals("") || !keyResult.equals("")) {
+                if ((errorResult != null && !errorResult.equals("")) || (keyResult != null && !keyResult.equals(""))) {
                     return CompletableFuture.completedFuture(new KeyLookupResult(keyResult, errorResult));
                 }
                 CompletableFuture<KeyLookupResult> failedFuture = new CompletableFuture<>();
                 failedFuture.completeExceptionally(new Exception("invalid "));
                 return failedFuture;
             } catch (Exception e) {
-                return null;
+                Log.e("TORUS", e.getMessage(), e);
+                CompletableFuture<KeyLookupResult> failedFuture = new CompletableFuture<>();
+                failedFuture.completeExceptionally(e);
+                return failedFuture;
             }
         }).getCompletableFuture();
     }

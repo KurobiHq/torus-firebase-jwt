@@ -36,7 +36,6 @@ public class SwiftTorusFirebaseJwtPlugin: NSObject, FlutterPlugin {
             let verifierId : String =  args["verifierId"] as! String
             let idToken : String  =  args["idToken"] as! String
             self.torusSwiftDirectSDK!.getTorusKey(verifier: verifier, verifierId:verifierId,  idToken:idToken).done{ data in
-              print("Private key reconstructed:", data)
               result(data)
             }
         default:

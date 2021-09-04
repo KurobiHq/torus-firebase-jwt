@@ -1,5 +1,7 @@
 package org.torusresearch.torusutils.helpers;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import java8.util.concurrent.CompletableFuture;
 
