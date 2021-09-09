@@ -47,7 +47,7 @@ public class TorusFirebaseJwtPlugin implements FlutterPlugin, MethodCallHandler 
         if (call.method.equals("init")) {
             String baseUrl = call.argument("baseUrl");
             String network = call.argument("network");
-            DirectSdkArgs directSdkArgs = new DirectSdkArgs(baseUrl, network == "testnet"? TorusNetwork.TESTNET : TorusNetwork.MAINNET);
+            DirectSdkArgs directSdkArgs = new DirectSdkArgs(baseUrl, network.equalsIgnoreCase("testnet") ? TorusNetwork.TESTNET : TorusNetwork.MAINNET);
             this.torusDirectSDK = new TorusDirectSdk(directSdkArgs, this.context);
             result.success(null);
         } else if (call.method.equals("getTorusKey")) {
